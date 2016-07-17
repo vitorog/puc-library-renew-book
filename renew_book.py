@@ -46,7 +46,7 @@ def main():
         print('Selecting right category...')
         for opt in category_field.options:
             if TECNOPUC_CATEGORY in opt.text:
-                print('Found category: ' + opt.text)
+                print('Found category.')
                 opt.click()
                 break
         print('Searching for PASSWORD field...')
