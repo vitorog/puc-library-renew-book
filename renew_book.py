@@ -11,10 +11,10 @@ from selenium.common.exceptions import  TimeoutException
 import sys
 import datetime
 
-PUC_LIBRARY_URL = 'http://www3.pucrs.br/portal/page/portal/biblioteca/Capa/Renovacao'
-USER_FIELD_ID = 'uid'
+PUC_LIBRARY_URL = 'http://biblioteca.pucrs.br/renovacao/'
+USER_FIELD_ID = 'cdMatricula'
 CATEGORY_FIELD_ID = 'idCategoria'
-TECNOPUC_CATEGORY = 'Tecnopuc'
+TECNOPUC_CATEGORY = 'TECNOPUC'
 PASSWORD_FIELD_NAME = 'txSenha'
 RENEW_ALL_FIELD_TEXT = 'Renovar TODOS'
 
