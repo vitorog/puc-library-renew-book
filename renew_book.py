@@ -1,22 +1,22 @@
 __author__ = 'vitorog'
 
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import selenium.webdriver.support.ui as ui
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import  TimeoutException
-import sys
 import datetime
+import sys
+
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 PUC_LIBRARY_URL = 'http://biblioteca.pucrs.br/renovacao/'
-USER_FIELD_ID = 'cdMatricula'
-CATEGORY_FIELD_ID = 'idCategoria'
+USER_FIELD_NAME = 'cdMatriculaHtml'
+CATEGORY_FIELD_NAME = 'idCategoriaHtml'
 TECNOPUC_CATEGORY = 'TECNOPUC'
-PASSWORD_FIELD_NAME = 'txSenha'
-RENEW_ALL_FIELD_TEXT = 'Renovar TODOS'
+PASSWORD_FIELD_NAME = 'txSenhaHtml'
+RENEW_ALL_FIELD_BTN_ID = 'br_renovar_todos'
 
 def main():
     if len(sys.argv) < 3:
@@ -34,14 +34,13 @@ def main():
     result = ""
     try:
         print('Searching for USER field...')
-        id_field = browser.find_element_by_id(USER_FIELD_ID)
+        id_field = browser.find_element_by_name(USER_FIELD_NAME)
         print('Done.')
         id_field.send_keys(id)
-        id_field.send_keys(Keys.RETURN)
         browser.implicitly_wait(2)
         print('Searching for CATEGORY field...')
         category_field = Select(WebDriverWait(browser, 2).until(
-           EC.presence_of_element_located((By.NAME, CATEGORY_FIELD_ID))))
+           EC.presence_of_element_located((By.NAME, CATEGORY_FIELD_NAME))))
         print('Done.')
         print('Selecting right category...')
         for opt in category_field.options:
@@ -56,7 +55,9 @@ def main():
         print('Done.')
         print('Searching for RENEW ALL field...')
         browser.implicitly_wait(2)
-        renew_field =  WebDriverWait(browser, 1).until(EC.presence_of_element_located((By.LINK_TEXT, RENEW_ALL_FIELD_TEXT)))
+        renew_field =  WebDriverWait(browser, 1).until(EC.presence_of_element_located((By.ID, RENEW_ALL_FIELD_BTN_ID)))
+        js_confirm = 'window.confirm = function(){return true;}'  # .js function to confirm a popup
+        browser.execute_script(js_confirm)
         renew_field.click()
         print('Done.')
         print('Finished successfully.')
@@ -64,6 +65,8 @@ def main():
     except TimeoutException as e:
         print('Process timeout')
         result = 'failed'
+    except Exception as e:
+        print("Unexpected error:", e)
     finally:
         print('Saving result screenshot...')
         browser.save_screenshot(result + '_' + str(datetime.datetime.now()) + '.png')
