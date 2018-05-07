@@ -17,15 +17,23 @@ CATEGORY_FIELD_NAME = 'idCategoriaHtml'
 TECNOPUC_CATEGORY = 'TECNOPUC'
 PASSWORD_FIELD_NAME = 'txSenhaHtml'
 RENEW_ALL_FIELD_BTN_ID = 'br_renovar_todos'
+STUDENT_CATEGORY_FIELD_VALUE = '42'
+TECNOPUC_CATEGORY_FIELD_VALUE = '119'
 
 def main():
     if len(sys.argv) < 3:
-        print('Missing id and pass')
-        print('Usage: python renew_book.py ID PASS')
+        print('Missing id, pass')
+        print('Usage: python renew_book.py ID PASS [CATEGORY]')
+        print('CATEGORY can be student or tecnopuc')
         sys.exit()
 
     id = sys.argv[1]
     password = sys.argv[2]
+    if len(sys.argv) == 4:
+        category = sys.argv[3]
+    else:
+        # Default category
+        category = 'student'
 
     browser = webdriver.PhantomJS()
     print('Accessing website...')
@@ -43,11 +51,13 @@ def main():
            EC.presence_of_element_located((By.NAME, CATEGORY_FIELD_NAME))))
         print('Done.')
         print('Selecting right category...')
-        for opt in category_field.options:
-            if TECNOPUC_CATEGORY in opt.text:
-                print('Found category.')
-                opt.click()
-                break
+        if category == 'student':
+            category_field.select_by_value(STUDENT_CATEGORY_FIELD_VALUE)
+        elif category == 'tecnopuc':
+            category_field.select_by_value(TECNOPUC_CATEGORY_FIELD_VALUE)
+        else:
+            print('Invalid category.')
+            return
         print('Searching for PASSWORD field...')
         password_field = WebDriverWait(browser, 1).until(EC.presence_of_element_located((By.NAME, PASSWORD_FIELD_NAME)))
         password_field.send_keys(password)
@@ -75,4 +85,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
